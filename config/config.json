@@ -1,0 +1,11 @@
+{
+  "JsonConfig": {
+    "ConfigIpAddress": "localhost:8080"
+  },
+  "ConnectionStrings": {
+    "BCPCouncil": "https://online.bcpcouncil.gov.uk/customer/llpg/bindaylookup/",
+    "OpenWeather": "https://api.openweathermap.org/data/2.5/weather",
+    "UniTimetable": "https://timetable.bournemouth.ac.uk/student/getevents",
+    "NewsApi": "http://newsapi.org/v2/top-headlines"
+  }
+}
