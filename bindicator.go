@@ -5,6 +5,7 @@ import (
 	"github.com/Jacobbrewer1/bindicator/config"
 	"github.com/Jacobbrewer1/bindicator/email"
 	"log"
+	"sync"
 	"time"
 )
 
@@ -18,13 +19,17 @@ func init() {
 func run() {
 	for {
 		for _, p := range config.JsonConfigVar.RemoteConfig.People {
-			b, err := bins.GetBins(*p.UPRN)
-			if err != nil {
-				log.Println(err)
-				continue
-			}
-			name, s := b.NextBin()
-			email.WaitAndSend(name, s, p)
+			go func(person *config.PeopleConfig) {
+				for {
+					b, err := bins.GetBins(*person.UPRN)
+					if err != nil {
+						log.Println(err)
+						return
+					}
+					name, s := b.NextBin()
+					email.WaitAndSend(name, s, person)
+				}
+			}(p)
 		}
 		time.Sleep(time.Hour * 72)
 	}
@@ -34,6 +39,8 @@ func main() {
 	if err := config.ReadConfig(); err != nil {
 		log.Fatal(err)
 	}
+	var w sync.WaitGroup
+	w.Add(1)
 	go run()
-	time.Sleep(time.Minute)
+	w.Wait()
 }

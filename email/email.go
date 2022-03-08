@@ -10,8 +10,9 @@ import (
 )
 
 func WaitAndSend(binName string, bin *bins.BinStruct, p *config.PeopleConfig) {
-	log.Printf("waiting for %v bin\n", binName)
-	time.Sleep(calculateTimeDifference(bin.GetNextTime()))
+	log.Printf("%v : waiting for %v bin\n", *p.Name, binName)
+	log.Printf("%v : sending email at %v\n", *p.Name, bin.GetEmailTime())
+	time.Sleep(calculateTimeDifference(bin.GetEmailTime()))
 	sendEmail(p, createMessage(binName, *p, *bin))
 }
 
@@ -39,7 +40,7 @@ func sendEmail(p *config.PeopleConfig, message string) {
 		log.Println(err)
 		return
 	}
-	fmt.Println("Email Sent Successfully!")
+	log.Printf("%v : email sent successfully", *p.Name)
 }
 
 func calculateTimeDifference(t time.Time) time.Duration {

@@ -46,6 +46,15 @@ type BinStruct struct {
 	Communal *bool   `json:"Communal"`
 }
 
+func (b BinStruct) GetEmailTime() time.Time {
+	rub, err := strconv.ParseInt(*b.Next, 10, 64)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	t := time.Unix(rub, 0).UTC()
+	return t.Add(-time.Hour * 14)
+}
+
 func (b BinStruct) GetNextTime() time.Time {
 	rub, err := strconv.ParseInt(*b.Next, 10, 64)
 	if err != nil {
@@ -79,7 +88,7 @@ func (b Bins) NextBin() (string, *BinStruct) {
 		return RecyclingText, b.Recycling.BinStruct
 	}
 	if tfw.Before(trub) && tfw.Before(tgw) && tfw.Before(trec) {
-		return FoodWasteText, b.Recycling.BinStruct
+		return FoodWasteText, b.FoodWaste.BinStruct
 	}
 	return "", &BinStruct{Next: nil}
 }
