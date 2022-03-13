@@ -50,7 +50,7 @@ func main() {
 	if err := config.ReadConfig(); err != nil {
 		log.Fatal(err)
 	}
-	//setup()
+	//setup() // TODO : Uncomment this out for PR
 	go run()
 	<-make(chan struct{})
 }
