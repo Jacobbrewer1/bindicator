@@ -2,21 +2,20 @@ package email
 
 import (
 	"fmt"
-	"github.com/Jacobbrewer1/bindicator/bins"
 	"github.com/Jacobbrewer1/bindicator/config"
 	"log"
 	"net/smtp"
 	"time"
 )
 
-func WaitAndSend(binName string, bin *bins.BinStruct, p *config.PeopleConfig) {
+func WaitAndSend(binName string, bin *config.BinStruct, p *config.PeopleConfig) {
 	log.Printf("%v : waiting for %v bin\n", *p.Name, binName)
 	log.Printf("%v : sending email at %v\n", *p.Name, bin.GetEmailTime())
 	time.Sleep(calculateTimeDifference(bin.GetEmailTime()))
 	sendEmail(p, createMessage(binName, *p, *bin))
 }
 
-func createMessage(binName string, person config.PeopleConfig, bin bins.BinStruct) string {
+func createMessage(binName string, person config.PeopleConfig, bin config.BinStruct) string {
 	return fmt.Sprintf("Subject: %v bin is next\nHey %v,\nYour %v bin is due to be emptied tomorrow on the %v",
 		binName,
 		*person.Name,

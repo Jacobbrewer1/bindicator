@@ -4,24 +4,27 @@ import (
 	"encoding/json"
 	"github.com/Jacobbrewer1/bindicator/config"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
-func GetBins(UPRN string) (*Bins, error) {
-	rawJson, err := fetchBins(UPRN)
+func GetBins(person *config.PeopleConfig) {
+	rawJson, err := fetchBins(*person.UPRN)
 	if err != nil {
-		return &Bins{}, err
+		log.Println(err)
+		return
 	}
 	b, err := decodeBins(rawJson)
 	if err != nil {
-		return &Bins{}, err
+		log.Println(err)
+		return
 	}
 	b.FormatBinDates()
-	return &b, nil
+	person.Bins = b
 }
 
-func decodeBins(rawJson json.RawMessage) (Bins, error) {
-	var b Bins
+func decodeBins(rawJson json.RawMessage) (config.Bins, error) {
+	var b config.Bins
 	err := json.Unmarshal(rawJson, &b)
 	return b, err
 }

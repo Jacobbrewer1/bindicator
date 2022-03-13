@@ -1,4 +1,4 @@
-package bins
+package config
 
 import (
 	"fmt"
@@ -14,6 +14,10 @@ const (
 	FoodWasteText   = "Food Waste"
 	RecyclingText   = "Recycling"
 	GardenWasteText = "Garden Waste"
+)
+
+var (
+	layout = "2006-01-02T15:04:05Z"
 )
 
 type Bins struct {
@@ -44,6 +48,20 @@ type BinStruct struct {
 	Next     *string `json:"Next"`
 	PdfLink  *string `json:"PdfLink"`
 	Communal *bool   `json:"Communal"`
+}
+
+func (b Bins) BinTomorrow() bool {
+	_, x := b.NextBin()
+	t := x.GetNextTime()
+	y := time.Now().UTC().Format("2006-01-02")
+	y = "2022-03-20T00:00:00Z"
+	j, err := time.Parse(layout, y)
+	if err != nil {
+		log.Println(err)
+		return false
+	}
+	j = j.Add(time.Hour * 24)
+	return t.Equal(j)
 }
 
 func (b BinStruct) GetEmailTime() time.Time {

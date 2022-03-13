@@ -5,7 +5,6 @@ import (
 	"github.com/Jacobbrewer1/bindicator/config"
 	"github.com/Jacobbrewer1/bindicator/email"
 	"log"
-	"sync"
 	"time"
 )
 
@@ -18,29 +17,40 @@ func init() {
 
 func run() {
 	for {
-		for _, p := range config.JsonConfigVar.RemoteConfig.People {
-			go func(person *config.PeopleConfig) {
-				for {
-					b, err := bins.GetBins(*person.UPRN)
-					if err != nil {
-						log.Println(err)
-						return
-					}
-					name, s := b.NextBin()
-					email.WaitAndSend(name, s, person)
+		go func() {
+			for _, p := range config.JsonConfigVar.RemoteConfig.People {
+				bins.GetBins(p)
+				if p.BinTomorrow() {
+					go func(person *config.PeopleConfig) {
+						name, s := person.NextBin()
+						email.WaitAndSend(name, s, person)
+					}(p)
 				}
-			}(p)
-		}
-		time.Sleep(time.Hour * 72)
+			}
+		}()
+		time.Sleep(time.Hour * 24)
 	}
+}
+
+func setup() {
+	y := time.Now().UTC().Format("2006-01-02")
+	y = y + "T00:00:00Z"
+	j, err := time.Parse("2006-01-02T15:04:05Z", y)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	j = j.Add(time.Hour*24)
+	diff := j.Sub(time.Now())
+	log.Println("waiting to run at ", diff)
+	time.Sleep(diff)
 }
 
 func main() {
 	if err := config.ReadConfig(); err != nil {
 		log.Fatal(err)
 	}
-	var w sync.WaitGroup
-	w.Add(1)
+	//setup()
 	go run()
-	w.Wait()
+	<-make(chan struct{})
 }
