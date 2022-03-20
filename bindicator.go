@@ -4,20 +4,9 @@ import (
 	"github.com/Jacobbrewer1/bindicator/bins"
 	"github.com/Jacobbrewer1/bindicator/config"
 	"github.com/Jacobbrewer1/bindicator/email"
-	"github.com/Jacobbrewer1/bindicator/templates"
-	"html/template"
 	"log"
-	"net/http"
 	"time"
 )
-
-func HandleFilePath() {
-	log.Println("parsing files")
-	http.Handle("/templates/", http.StripPrefix("/templates/", http.FileServer(http.Dir("templates"))))
-	t := template.Must(template.New("").ParseGlob("./templates/*.html"))
-	templates.SetTemplates(t)
-	log.Println("Files parsed successfully")
-}
 
 func init() {
 	log.Println("initializing logging")
@@ -58,7 +47,6 @@ func setup() {
 }
 
 func main() {
-	HandleFilePath()
 	if err := config.ReadConfig(); err != nil {
 		log.Fatal(err)
 	}
