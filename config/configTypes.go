@@ -23,6 +23,7 @@ type PeopleConfig struct {
 	Name  *string `json:"Name,omitempty"`
 	Email *string `json:"Email,omitempty"`
 	UPRN  *string `json:"UPRN,omitempty"`
+	Bins  `json:"Bins,omitempty"`
 }
 
 type JsonConfigStruct struct {

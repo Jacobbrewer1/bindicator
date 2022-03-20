@@ -1,0 +1,36 @@
+name: PR Tester
+
+on:
+  # This should only run when a pull request is made to the main or a feature branch
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+      - feature/*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.x
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        # This will install everything in the go.mod file
+        run: go get github.com/Jacobbrewer1/bindicator
+
+      - name: Run build
+        # This will provide a detailed log output of the new builds that are incomplete
+        run: go build -v -work
+        # This will build everything again, log it out and log the working directory
+        #run: go build -a -v -work
+
+      - name: Run tests
+        # This will provide detailed test logs for each individual test
+        run: go test -v ./...
