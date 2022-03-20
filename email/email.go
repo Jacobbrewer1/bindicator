@@ -14,8 +14,8 @@ import (
 func WaitAndSend(binName string, bin *config.BinStruct, p *config.PeopleConfig) {
 	log.Printf("%v : waiting for %v bin\n", *p.Name, binName)
 	log.Printf("%v : sending email at %v\n", *p.Name, bin.GetEmailTime())
-	//time.Sleep(calculateTimeDifference(bin.GetEmailTime()))
-	sendEmail(p, bin, binName)
+	time.Sleep(calculateTimeDifference(bin.GetEmailTime()))
+	go sendEmail(p, bin, binName)
 }
 
 func sendEmail(p *config.PeopleConfig, bin *config.BinStruct, binName string) {
