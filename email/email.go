@@ -19,21 +19,6 @@ func WaitAndSend(binName string, bin *config.BinStruct, p *config.PeopleConfig) 
 }
 
 func sendEmail(p *config.PeopleConfig, bin *config.BinStruct, binName string) {
-	// Authentication.
-	/*auth := smtp.PlainAuth("", *config.JsonConfigVar.RemoteConfig.Email.From,
-	*config.JsonConfigVar.RemoteConfig.Email.Password,
-	*config.JsonConfigVar.RemoteConfig.Email.SmtpHost
-	 */
-	/*	// Sending email.
-		err := smtp.SendMail(*config.JsonConfigVar.RemoteConfig.Email.SmtpHost+":"+*config.JsonConfigVar.RemoteConfig.Email.SmtpPort,
-			auth, *config.JsonConfigVar.RemoteConfig.Email.From,
-			to,
-			[]byte(message))
-		if err != nil {
-			log.Println(err)
-			return
-		}*/
-
 	m := gomail.NewMessage()
 	m.SetHeader("From", *config.JsonConfigVar.RemoteConfig.Email.From)
 	m.SetHeader("To", *p.Email)
