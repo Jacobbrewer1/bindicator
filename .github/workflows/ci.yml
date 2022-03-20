@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  # This workflow should only run when there are pushes to the main branches as this displays on the ReadMe.md file
+  # Any deployment integrations should also go in this workflow
+  push:
+    branches:
+      - main
+      - master
+      - develop
+      - feature/*
+
+jobs:
+  dockerImage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        
+      - name: Build docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/bindicator:latest .
+        
+      - name: Push image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/bindicator:latest

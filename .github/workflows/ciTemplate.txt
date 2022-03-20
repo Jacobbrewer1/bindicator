@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  # This workflow should only run when there are pushes to the main branches as this displays on the ReadMe.md file
+  # Any deployment integrations should also go in this workflow
+  push:
+    branches:
+      - main
+      - master
+      - develop
+      - feature/*
+
+jobs:
+  upload:
+    runs-on: windows-latest
+    steps:
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.x
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        # This will install everything in the go.mod file
+        run: go get bindicator
+
+      - name: Run build
+        # This will provide a detailed log output of the new builds that are incomplete
+        #run: go build -v
+        # This will build everything again, log it out and log the working directory
+        run: go build -a -v -work
+        
+      - name: list
+        run: ls
+        
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.3.1
+        with:
+        # Artifact name
+          # A file, directory or wildcard pattern that describes what to upload
+          path: ./bindicator.exe
+
+  dockerImage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v2
+        
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        
+      - name: Build docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/bindicator:latest .
+        
+      - name: Push image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/bindicator:latest
