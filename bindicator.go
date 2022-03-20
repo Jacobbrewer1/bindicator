@@ -4,7 +4,9 @@ import (
 	"github.com/Jacobbrewer1/bindicator/bins"
 	"github.com/Jacobbrewer1/bindicator/config"
 	"github.com/Jacobbrewer1/bindicator/email"
+	"github.com/Jacobbrewer1/bindicator/helper"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -28,7 +30,15 @@ func run() {
 				}
 			}
 		}()
-		time.Sleep(time.Hour * 24)
+		t := time.Now().UTC().Format(helper.TimeLayout)
+		elms := strings.Split(t, "T")
+		w, err := time.Parse(helper.TimeLayout, elms[0]+"T23:00:00Z")
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		log.Printf("waiting until %v to run again\n", w)
+		time.Sleep(helper.CalculateTimeDifference(w))
 	}
 }
 

@@ -3,6 +3,7 @@ package email
 import (
 	"fmt"
 	"github.com/Jacobbrewer1/bindicator/config"
+	"github.com/Jacobbrewer1/bindicator/helper"
 	"gopkg.in/gomail.v2"
 	"log"
 	"path/filepath"
@@ -14,7 +15,7 @@ import (
 func WaitAndSend(binName string, bin *config.BinStruct, p *config.PeopleConfig) {
 	log.Printf("%v : waiting for %v bin\n", *p.Name, binName)
 	log.Printf("%v : sending email at %v\n", *p.Name, bin.GetEmailTime())
-	time.Sleep(calculateTimeDifference(bin.GetEmailTime()))
+	time.Sleep(helper.CalculateTimeDifference(bin.GetEmailTime()))
 	go sendEmail(p, bin, binName)
 }
 
@@ -45,10 +46,4 @@ func sendEmail(p *config.PeopleConfig, bin *config.BinStruct, binName string) {
 		return
 	}
 	log.Printf("%v : email sent successfully", *p.Name)
-}
-
-func calculateTimeDifference(t time.Time) time.Duration {
-	diff := t.Sub(time.Now())
-	log.Println("time difference ", diff)
-	return diff
 }
