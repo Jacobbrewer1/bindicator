@@ -24,6 +24,7 @@ func sendEmail(p *config.PeopleConfig, bin *config.BinStruct, binName string) {
 	elms := strings.Split(b, " ")
 	elms = elms[:len(elms) - 2]
 	binDate := strings.Join(elms, " ")
+	
 	m := gomail.NewMessage()
 	m.SetHeader("From", *config.JsonConfigVar.RemoteConfig.Email.From)
 	m.SetHeader("To", *p.Email)
