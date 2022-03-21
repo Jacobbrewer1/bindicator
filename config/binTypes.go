@@ -77,6 +77,14 @@ func (b BinStruct) GetNextTime() time.Time {
 	return time.Unix(rub, 0).UTC()
 }
 
+func (b BinStruct) GetPreviousTime() time.Time {
+	rub, err := strconv.ParseInt(*b.Previous, 10, 64)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return time.Unix(rub, 0).UTC()
+}
+
 func (b BinStruct) GetNextTimeString() string {
 	rub, err := strconv.ParseInt(*b.Next, 10, 64)
 	if err != nil {

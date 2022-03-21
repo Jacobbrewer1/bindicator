@@ -23,10 +23,10 @@ func run() {
 			for _, p := range config.JsonConfigVar.RemoteConfig.People {
 				bins.GetBins(p)
 				if p.BinTomorrow() {
-					log.Printf("%v has a bin tomorrow\n", *p.Name)
 					go func(person *config.PeopleConfig) {
+						log.Printf("%v has a bin tomorrow\n", *person.Name)
 						name, s := person.NextBin()
-						email.WaitAndSend(name, s, person)
+						go email.WaitAndSend(name, s, person)
 					}(p)
 				} else {
 					log.Printf("%v does not have any bins tomorrow\n", *p.Name)
@@ -42,6 +42,7 @@ func run() {
 		}
 		log.Printf("waiting until %v to run again\n", w)
 		time.Sleep(helper.CalculateTimeDifference(w))
+		config.UpdateConfig()
 	}
 }
 

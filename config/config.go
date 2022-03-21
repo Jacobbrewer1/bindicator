@@ -56,6 +56,16 @@ func findFile(path string) (string, bool) {
 	return abs, true
 }
 
+func UpdateConfig() {
+	var err error
+	JsonConfigVar.RemoteConfig, err = getConfig()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	return
+}
+
 func getConfig() (*RemoteConfigStruct, error) {
 	rawJson, err := requestConfig()
 	if err != nil {
