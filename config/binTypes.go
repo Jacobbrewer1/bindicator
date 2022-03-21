@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"github.com/Jacobbrewer1/bindicator/helper"
 	"log"
 	"strconv"
 	"strings"
@@ -14,10 +15,6 @@ const (
 	FoodWasteText   = "Food Waste"
 	RecyclingText   = "Recycling"
 	GardenWasteText = "Garden Waste"
-)
-
-var (
-	layout = "2006-01-02T15:04:05Z"
 )
 
 type Bins struct {
@@ -53,9 +50,8 @@ type BinStruct struct {
 func (b Bins) BinTomorrow() bool {
 	_, x := b.NextBin()
 	t := x.GetNextTime()
-	y := time.Now().UTC().Format("2006-01-02")
-	y = "2022-03-20T00:00:00Z"
-	j, err := time.Parse(layout, y)
+	y := time.Now().UTC().Format(helper.DateLayout)
+	j, err := time.Parse(helper.DateLayout, y)
 	if err != nil {
 		log.Println(err)
 		return false
@@ -75,6 +71,14 @@ func (b BinStruct) GetEmailTime() time.Time {
 
 func (b BinStruct) GetNextTime() time.Time {
 	rub, err := strconv.ParseInt(*b.Next, 10, 64)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return time.Unix(rub, 0).UTC()
+}
+
+func (b BinStruct) GetPreviousTime() time.Time {
+	rub, err := strconv.ParseInt(*b.Previous, 10, 64)
 	if err != nil {
 		log.Fatalln(err)
 	}
