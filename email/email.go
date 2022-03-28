@@ -40,7 +40,7 @@ func sendEmail(p *config.PeopleConfig, bin []*config.BinStruct) {
 	for _, b := range bin {
 		binText = binText + *b.Name + ", "
 	}
-	binText = binText[:len(bodyText)-2]
+	binText = binText[:len(binText)-2]
 
 	html := fmt.Sprintf(emailText,
 		binText,
@@ -55,8 +55,8 @@ func sendEmail(p *config.PeopleConfig, bin []*config.BinStruct) {
 		return
 	}
 
-	log.Printf("%v : email prepared", p.Name)
-	log.Printf("%v : sending email", p.Name)
+	log.Printf("%v : email prepared", *p.Name)
+	log.Printf("%v : sending email", *p.Name)
 
 	d := gomail.NewDialer(*config.JsonConfigVar.RemoteConfig.Email.SmtpHost, i,
 		*config.JsonConfigVar.RemoteConfig.Email.From, *config.JsonConfigVar.RemoteConfig.Email.Password)
