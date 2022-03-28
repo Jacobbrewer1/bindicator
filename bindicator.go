@@ -24,9 +24,10 @@ func run() {
 				bins.GetBins(p)
 				if p.BinTomorrow() {
 					go func(person *config.PeopleConfig) {
+						person.SetupNames()
 						log.Printf("%v has a bin tomorrow\n", *person.Name)
-						name, s := person.NextBin()
-						go email.WaitAndSend(name, s, person)
+						s := person.GetBinsTomorrow()
+						go email.WaitAndSend(s, person)
 					}(p)
 				} else {
 					log.Printf("%v does not have any bins tomorrow\n", *p.Name)
