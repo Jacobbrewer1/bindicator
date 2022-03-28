@@ -41,31 +41,27 @@ type GardenWaste struct {
 }
 
 type BinStruct struct {
+	Name     *string
 	Previous *string `json:"Previous"`
 	Next     *string `json:"Next"`
 	PdfLink  *string `json:"PdfLink"`
 	Communal *bool   `json:"Communal"`
 }
 
-func (b Bins) BinTomorrow() bool {
-	_, x := b.NextBin()
-	t := x.GetNextTime()
-	y := time.Now().UTC().Format(helper.DateLayout)
-	j, err := time.Parse(helper.DateLayout, y)
-	if err != nil {
-		log.Println(err)
-		return false
-	}
-	j = j.Add(time.Hour * 24)
-	return t.Equal(j)
+func (b *Bins) SetupNames() {
+	b.Rubbish.Name = helper.PointToString(RubbishText)
+	b.Recycling.Name = helper.PointToString(RecyclingText)
+	b.FoodWaste.Name = helper.PointToString(FoodWasteText)
+	b.GardenWaste.Name = helper.PointToString(GardenWasteText)
 }
 
-func (b BinStruct) GetEmailTime() time.Time {
-	rub, err := strconv.ParseInt(*b.Next, 10, 64)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	t := time.Unix(rub, 0).UTC()
+func (b Bins) BinTomorrow() bool {
+	x := b.GetBinsTomorrow()
+	return len(x) > 0
+}
+
+func (b Bins) GetEmailTime() time.Time {
+	t := helper.GetTimeTomorrow()
 	return t.Add(-time.Hour * 14)
 }
 
@@ -94,25 +90,27 @@ func (b BinStruct) GetNextTimeString() string {
 	return fmt.Sprintf("%v-%v-%v", dd, mm, yy)
 }
 
-func (b Bins) NextBin() (string, *BinStruct) {
-	trub := b.Rubbish.GetNextTime()
-	trec := b.Recycling.GetNextTime()
-	tfw := b.FoodWaste.GetNextTime()
-	tgw := b.GardenWaste.GetNextTime()
+func (b Bins) GetBinsTomorrow() []*BinStruct {
+	trub := b.Rubbish.GetPreviousTime()
+	trec := b.Recycling.GetPreviousTime()
+	tfw := b.FoodWaste.GetPreviousTime()
+	tgw := b.GardenWaste.GetPreviousTime()
 
-	if trub.Before(tgw) && trub.Before(trec) && trub.Before(tfw) {
-		return RubbishText, b.Rubbish.BinStruct
+	var binsReturn []*BinStruct
+	t := helper.GetTimeTomorrow()
+	if t.Equal(trub) {
+		binsReturn = append(binsReturn, b.Rubbish.BinStruct)
 	}
-	if tgw.Before(trub) && tgw.Before(trec) && tgw.Before(tfw) {
-		return GardenWasteText, b.GardenWaste.BinStruct
+	if t.Equal(trec) {
+		binsReturn = append(binsReturn, b.Recycling.BinStruct)
 	}
-	if trec.Before(trub) && trec.Before(tgw) && trec.Before(tfw) {
-		return RecyclingText, b.Recycling.BinStruct
+	if t.Equal(tfw) {
+		binsReturn = append(binsReturn, b.FoodWaste.BinStruct)
 	}
-	if tfw.Before(trub) && tfw.Before(tgw) && tfw.Before(trec) {
-		return FoodWasteText, b.FoodWaste.BinStruct
+	if t.Equal(tgw) {
+		binsReturn = append(binsReturn, b.GardenWaste.BinStruct)
 	}
-	return "", &BinStruct{Next: nil}
+	return binsReturn
 }
 
 func (b *Bins) FormatBinDates() {
