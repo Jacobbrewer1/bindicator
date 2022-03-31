@@ -146,3 +146,11 @@ func (b *Bins) FormatBinDates() {
 	}(b)
 	w.Wait()
 }
+
+func (b BinStruct) HasPdf() bool {
+	return *b.PdfLink == ""
+}
+
+func (b BinStruct) IsCommunal() bool {
+	return *b.Communal
+}

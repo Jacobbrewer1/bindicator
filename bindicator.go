@@ -24,7 +24,6 @@ func run() {
 				bins.GetBins(p)
 				if p.BinTomorrow() {
 					go func(person *config.PeopleConfig) {
-						person.SetupNames()
 						log.Printf("%v has a bin tomorrow\n", *person.Name)
 						s := person.GetBinsTomorrow()
 						go email.WaitAndSend(s, person)
@@ -35,8 +34,8 @@ func run() {
 			}
 		}()
 		t := time.Now().UTC().Add(time.Hour * 24).Format(helper.TimeLayout)
-		elms := strings.Split(t, "T")
-		w, err := time.Parse(helper.TimeLayout, elms[0]+"T05:00:00Z")
+		date := strings.Split(t, "T")[0]
+		w, err := time.Parse(helper.TimeLayout, date+"T05:00:00Z")
 		if err != nil {
 			log.Println(err)
 			continue
