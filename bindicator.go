@@ -27,7 +27,6 @@ func run() {
 						log.Printf("%v has a bin tomorrow\n", *person.Name)
 						s := person.GetBinsTomorrow()
 						go email.WaitAndSend(s, person)
-
 					} else {
 						log.Printf("%v does not have any bins tomorrow\n", *person.Name)
 					}
