@@ -14,7 +14,7 @@ var (
 func CalculateTimeDifference(t time.Time) time.Duration {
 	n := time.Now().UTC()
 	zone, offset := time.Now().Zone()
-	if zone != "GMT" || zone != "UTC" {
+	if zone != "GMT" && zone != "UTC" {
 		n = n.Add(time.Second * time.Duration(offset))
 	}
 	diff := t.Sub(n)
