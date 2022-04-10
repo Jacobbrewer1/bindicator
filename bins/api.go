@@ -21,6 +21,7 @@ func GetBins(person *config.PeopleConfig) {
 	}
 	b.FormatBinDates()
 	person.Bins = b
+	person.SetupNames()
 }
 
 func decodeBins(rawJson json.RawMessage) (config.Bins, error) {

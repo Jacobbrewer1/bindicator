@@ -8,7 +8,6 @@ on:
       - main
       - master
       - develop
-      - feature/*
 
 jobs:
   dockerImage:
